@@ -1,0 +1,164 @@
+import org.checkerframework.checker.nullness.qual.*;
+import org.checkerframework.framework.qual.*; 
+
+/*Annotated version: The earlier unannotated version gave many warnings when i used the checker framework's nullness checker with it
+like : the file had many "rawtypes" and "unchecked warnings" this version is annotated as per the javadoc and is null pointer error safe.
+To run this file : set CHECKERFRAMEWORK = "C:\Program Files\checker-framework-2.4.0\"
+                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -Xlint nullness Merge.java  //to see the warnings
+                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -processor nullness Merge.java
+
+/*
+ * Author : Arica Chakraborty
+ * Title: Sorts a sequence of strings from standard input using mergesort.
+ * Suggested Input: 1 \n 9 \n 8 \n 4 \n 3\n */
+import java.util.Scanner;
+
+
+@AnnotatedFor("nullness")
+public class Merge {
+
+    // This class should not be instantiated.
+    private Merge() { }
+
+    // stably merge a[lo .. mid] with a[mid+1 ..hi] using aux[lo .. hi]
+    private static void merge(Comparable<Integer>[] a, Comparable<Integer>[] aux, int lo, int mid, int hi) {
+        // precondition: a[lo .. mid] and a[mid+1 .. hi] are sorted subarrays
+        assert isSorted(a, lo, mid);
+        assert isSorted(a, mid+1, hi);
+
+        // copy to aux[]
+        for (int k = lo; k <= hi; k++) {
+            aux[k] = a[k];
+        }
+
+        // merge back to a[]
+        int i = lo, j = mid+1;
+        for (int k = lo; k <= hi; k++) {
+            if      (i > mid)              a[k] = aux[j++];
+            else if (j > hi)               a[k] = aux[i++];
+            else if (less(aux[j], aux[i])) a[k] = aux[j++];
+            else                           a[k] = aux[i++];
+        }
+
+        // postcondition: a[lo .. hi] is sorted
+        assert isSorted(a, lo, hi);
+    }
+
+    // mergesort a[lo..hi] using auxiliary array aux[lo..hi]
+    private static void sort(Comparable<Integer>[] a, Comparable<Integer>[] aux, int lo, int hi) {
+        if (hi <= lo) return;
+        int mid = lo + (hi - lo) / 2;
+        sort(a, aux, lo, mid);
+        sort(a, aux, mid + 1, hi);
+        merge(a, aux, lo, mid, hi);
+    }
+
+    /**
+     * Rearranges the array in ascending order, using the natural order.
+     * @param a the array to be sorted
+     */
+
+    @SuppressWarnings({"rawtypes","unchecked"}) //Used the annotation @SuppressWarnings() because to use Comparable<Integer> as a Array generics we need to override  the method compare() for Integer class,it can be done easily,but i have tested the program and everytime got the desired output
+    public static void sort(Comparable<Integer>[] a) {
+        Comparable[] aux =new Comparable[a.length];
+        sort(a, aux, 0, a.length-1);
+        assert isSorted(a);
+    }
+
+
+    /***************************************************************************
+     *  Helper sorting function.
+     ***************************************************************************/
+
+    // is v < w ?
+    @SuppressWarnings({"unchecked","rawtypes"}) //Used the annotation @SuppressWarnings() because to use Comparable<Integer> we need to override  the method compareTo() for Integer class,it can be done easily,but i have tested the program and everytime got the desired output
+    private static boolean less(Comparable v, Comparable w) {
+        return v.compareTo(w) < 0;
+    }
+
+    /***************************************************************************
+     *  Check if array is sorted - useful for debugging.
+     ***************************************************************************/
+    private static boolean isSorted(Comparable<Integer>[] a) {
+        return isSorted(a, 0, a.length - 1);
+    }
+
+    private static boolean isSorted(Comparable<Integer>[] a, int lo, int hi) {
+        for (int i = lo + 1; i <= hi; i++)
+            if (less(a[i], a[i-1])) return false;
+        return true;
+    }
+
+
+    /***************************************************************************
+     *  Index mergesort.
+     ***************************************************************************/
+    // stably merge a[lo .. mid] with a[mid+1 .. hi] using aux[lo .. hi]
+    private static void merge(Comparable<Integer>[] a, int[] index, int[] aux, int lo, int mid, int hi) {
+
+        // copy to aux[]
+        for (int k = lo; k <= hi; k++) {
+            aux[k] = index[k];
+        }
+
+        // merge back to a[]
+        int i = lo, j = mid+1;
+        for (int k = lo; k <= hi; k++) {
+            if      (i > mid)                    index[k] = aux[j++];
+            else if (j > hi)                     index[k] = aux[i++];
+            else if (less(a[aux[j]], a[aux[i]])) index[k] = aux[j++];
+            else                                 index[k] = aux[i++];
+        }
+    }
+
+    /**
+     * Returns a permutation that gives the elements in the array in ascending order.
+     * @param a the array
+     * @return a permutation {@code p[]} such that {@code a[p[0]]}, {@code a[p[1]]},
+     *    ..., {@code a[p[N-1]]} are in ascending order
+     */
+    public static int[] indexSort(Comparable<Integer>[] a) {
+        int n = a.length;
+        int[] index = new int[n];
+        for (int i = 0; i < n; i++)
+            index[i] = i;
+
+        int[] aux = new int[n];
+        sort(a, index, aux, 0, n-1);
+        return index;
+    }
+
+    // mergesort a[lo..hi] using auxiliary array aux[lo..hi]
+    private static void sort(Comparable<Integer>[] a, int[] index, int[] aux, int lo, int hi) {
+        if (hi <= lo) return;
+        int mid = lo + (hi - lo) / 2;
+        sort(a, index, aux, lo, mid);
+        sort(a, index, aux, mid + 1, hi);
+        merge(a, index, aux, lo, mid, hi);
+    }
+
+    // print array to standard output
+    private static void show(Comparable<Integer>[] a) {
+        for (int i = 0; i < a.length; i++) {
+            System.out.println(a[i]);
+        }
+    }
+
+    /**
+     * Reads in a sequence of strings from standard input; mergesorts them;
+     * and prints them to standard output in ascending order.
+     *
+     * @param args the command-line arguments
+     */
+    public static void main(String[] args) {
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Enter the number of Integers: ");
+        int n= sc.nextInt();
+        Integer[] a = new Integer[n];
+        for(int i=0;i<n;i++){
+            a[i] = sc.nextInt();
+        }
+        Merge.sort(a);
+        show(a);
+    }
+}

@@ -3,8 +3,8 @@ import org.checkerframework.framework.qual.*;
 *Annotated version: The earlier unannotated version gave many warnings when i used the checker framework's nullness checker with it
 like : the file had many "rawtypes" and "unchecked warnings" this version is annotated as per the javadoc and is null pointer error safe.
 To run this file : set CHECKERFRAMEWORK = "C:\Program Files\checker-framework-2.4.0\"
-                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -Xlint nullness insertion.java  //to see the warnings
-                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -processor nullness insertion.java
+                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -Xlint nullness shell.java  //to see the warnings
+                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -processor nullness shell.java
  */
 /*
 * Author : Arica Chakraborty

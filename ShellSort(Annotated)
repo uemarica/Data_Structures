@@ -12,6 +12,7 @@ To run this file : set CHECKERFRAMEWORK = "C:\Program Files\checker-framework-2.
 * Suggested Input: 4 \n 3 \n 9 \n 8 \n 1 \n*/
 import java.util.Scanner;
 
+@AnnotatedFor({"nullness"})
 public class Shell {
 
     // This class should not be instantiated.

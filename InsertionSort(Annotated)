@@ -3,6 +3,7 @@ import org.checkerframework.framework.qual.*;
 /*Annotated version: The earlier unannotated version gave many warnings when i used the checker framework's nullness checker with it
 like : the file had many "rawtypes" and "unchecked warnings" this version is annotated as per the javadoc and is null pointer error safe.
 To run this file : set CHECKERFRAMEWORK = "C:\Program Files\checker-framework-2.4.0\"
+                   java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -Xlint nullness insertion.java //to see the warnings
                    java -jar  "$CHECKERFRAMEWORK/checker/dist/checker.jar" -processor nullness insertion.java
  */
 /*
@@ -134,7 +135,7 @@ public class Insertion {
     /***************************************************************************
      *  Check if array is sorted - useful for debugging.
      ***************************************************************************/
-    @SuppressWarnings("unchecked") //Used the annotation @SuppressWarnings() because to use Comparable<Integer> we need to override  the method compareTo() for Integer class,it can be done easily,but i have tested the program and everytime got the desired output
+    @SuppressWarnings("unchecked") //Used the annotation @SuppressWarnings() because the type of a is being suspected i have tested the program and everytime got the desired output
     private static boolean isSorted(Comparable<Integer>[] a) {
         return isSorted(a, 0, a.length);
     }
